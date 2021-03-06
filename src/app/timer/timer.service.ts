@@ -9,14 +9,15 @@ export class TimerService {
   public init: number = 20;
   public pause: boolean = true;
   private countdownTimerRef:any = null;
-  public countdown$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  public countdownSb$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  public countdown$ = this.countdownSb$.asObservable();
   public isEnd = new Subject<void>();
   public isEnd$ = this.isEnd.asObservable();
 
   constructor() { }
 
   public startCountdown(init?){
-    this.countdown$.next(init || this.init);
+    this.countdownSb$.next(init || this.init);
   }
 
   public toggleCountdown(){
@@ -30,18 +31,16 @@ export class TimerService {
   }
 
   public reStartCountdown(){
-      if(this.countdown$.getValue()>0){
+      if(this.countdownSb$.getValue()>0){
         this.clearTimeout();
         this.doCountdown();
       }
     
   }
 
-
-
   private doCountdown(){
     this.countdownTimerRef = setTimeout(()=>{
-      this.countdown$.next(this.countdown$.getValue()-1);
+      this.countdownSb$.next(this.countdownSb$.getValue()-1 );
       this.processCountdown();
     }, 1000);
   }
@@ -49,7 +48,7 @@ export class TimerService {
 
 
   private processCountdown(){
-    if(this.countdown$.getValue() == 0){
+    if(this.countdownSb$.getValue() == 0){
       console.log("--countdown end--");
       this.isEnd.next();
     }
