@@ -7,4 +7,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Timer';
+
+  complete(){
+    console.log("La cuenta atrás ha finalizado");
+  }
 }
