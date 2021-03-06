@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,14 +9,14 @@ export class TimerService {
   public init: number = 20;
   public pause: boolean = true;
   private countdownTimerRef:any = null;
-  public countdown:number = 0;
+  public countdown$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public isEnd = new Subject<void>();
   public isEnd$ = this.isEnd.asObservable();
 
   constructor() { }
 
   public startCountdown(init?){
-    this.countdown = init || this.init;
+    this.countdown$.next(init || this.init);
   }
 
   public toggleCountdown(){
@@ -30,7 +30,7 @@ export class TimerService {
   }
 
   public reStartCountdown(){
-      if(this.countdown && this.countdown>0){
+      if(this.countdown$.getValue()>0){
         this.clearTimeout();
         this.doCountdown();
       }
@@ -41,7 +41,7 @@ export class TimerService {
 
   private doCountdown(){
     this.countdownTimerRef = setTimeout(()=>{
-      this.countdown = this.countdown -1;
+      this.countdown$.next(this.countdown$.getValue()-1);
       this.processCountdown();
     }, 1000);
   }
@@ -49,7 +49,7 @@ export class TimerService {
 
 
   private processCountdown(){
-    if(this.countdown == 0){
+    if(this.countdown$.getValue() == 0){
       console.log("--countdown end--");
       this.isEnd.next();
     }
