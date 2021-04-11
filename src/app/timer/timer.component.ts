@@ -17,7 +17,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   subscription: Subscription = null;
   subscriptionCountdown: Subscription = null;
 
-  countdown: any = { value: 0};
+  countdown: any = 0;
 
   constructor(public timerService: TimerService, public changeDetectorRef: ChangeDetectorRef ) { }
 
@@ -35,6 +35,7 @@ export class TimerComponent implements OnInit, OnDestroy {
     });
 
   }
+
 
   get progress(){
     return (this.init-this.countdown.value )/this.init*100
